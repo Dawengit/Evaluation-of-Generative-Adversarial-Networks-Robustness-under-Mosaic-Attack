@@ -1,57 +1,49 @@
-# Evaluation of Generative Adversarial Networks’ Robustness under Mosaic Attack
-
-**Course:** ECE661  
-**Team:** 22
+# Evaluation of Generative Adversarial Networks’ Robustness under Mosaic Attack  
+**ECE661 Team 22**
 
 ## Overview
+In many critical image-based applications—such as surveillance, medical imaging, and autonomous vehicles—degraded images due to blur, noise, or obstructions can severely hinder performance and reliability. Traditional restoration methods often struggle with complex degradations, underscoring the need for more advanced techniques.
 
-This project explores the robustness of three state-of-the-art Generative Adversarial Network (GAN) models—DeblurGAN, Pix2Pix, and SRGAN—when faced with mosaic pattern attacks. The overarching goal is to understand how adversarial obstructions, such as artificially induced mosaics, affect the performance of GAN-based image restoration models in tasks like facial image enhancement.
+This project investigates the robustness of three prominent Generative Adversarial Network (GAN) models—**DeblurGAN**, **Pix2Pix**, and **SRGAN**—against adversarial mosaic attacks. We employ a facial image dataset and simulate challenging conditions by introducing severe blurring and applying a mosaic pattern attack to the input images. Our objective is to evaluate how well these models restore image clarity and preserve key facial attributes when confronted with deliberately perturbed inputs.
 
 ## Methodology
+1. **Data Preparation:**  
+   - We split the dataset into training and testing sets with an 8:2 ratio.
+   - GaussianBlur is applied (radius = 20) to simulate image degradation.
+   - For robust testing, a mosaic attack with severity 70 is introduced to further degrade the blurred images.
+   
+2. **Models Implemented:**
+   - **DeblurGAN:**  
+     A ResNet-based generator combined with a PatchGAN discriminator, employing adversarial and perceptual losses to achieve high-fidelity image restoration.
+   
+   - **Pix2Pix:**  
+     A versatile image-to-image translation framework using a U-Net generator and PatchGAN discriminator. It balances adversarial loss with L1 loss for stable, realistic outputs.
+   
+   - **SRGAN:**  
+     A GAN-based super-resolution model focusing on perceptual quality. It uses a ResNet-based generator and PatchGAN discriminator, along with a perceptual loss that emphasizes high-frequency details.
+   
+3. **Training:**
+   - All models are trained for 200 epochs using the Adam optimizer.
+   - Inputs are resized to 256×256 pixels.
+   - Models are first trained on blurred datasets (no attacks), and then retrained on mosaic-attacked datasets.
+   
+4. **Evaluation Metrics:**
+   - **Peak Signal-to-Noise Ratio (PSNR):**  
+     Quantifies the fidelity of the reconstructed image at the pixel level.
+   - **Structural Similarity Index Measure (SSIM):**  
+     Evaluates the perceptual quality by comparing luminance, contrast, and structure between the restored and original images.
 
-1. **Dataset Preparation:**  
-   The project uses a face dataset. We first apply Gaussian blur as a baseline degradation method to simulate real-world image quality issues commonly encountered in surveillance and other visual analysis applications.
+## Results and Key Findings
+- **DeblurGAN** achieves the highest PSNR and SSIM on non-attacked images, indicating top-tier image restoration quality under ideal conditions.
+- Under mosaic attacks, all models’ performance declines, reflected in increased losses and reduced PSNR/SSIM.
+- **Pix2Pix** demonstrates the smallest relative drop in metrics, indicating superior robustness against adversarial mosaic patterns.
+- **SRGAN** experiences greater instability and a more substantial performance decline under attack scenarios.
 
-2. **Models Evaluated:**
-   - **DeblurGAN:** Employs a ResNet-based generator and PatchGAN discriminator for motion-deblurring tasks, focusing on sharper and more detailed output images.
-   - **Pix2Pix:** Utilizes a conditional GAN framework with a U-Net generator and PatchGAN discriminator to translate degraded images into more refined outputs.
-   - **SRGAN:** Designed for super-resolution tasks, featuring a ResNet-based generator that aims to enhance the spatial resolution and reconstruct high-frequency details.
+## Conclusion and Future Work
+Our experiments reveal that DeblurGAN excels in delivering high-fidelity restoration when images are simply blurred, while Pix2Pix provides a more balanced solution by maintaining better resilience under adversarial mosaic attacks. Future directions include evaluating these and other GAN models against a broader range of adversarial conditions (e.g., noise, occlusions, geometric distortions), integrating defensive training strategies, and improving computational efficiency to ensure practical deployment in real-world surveillance and image restoration systems.
 
-3. **Mosaic Attack Introduction:**
-   After training each model on blurred images, we introduce a mosaic pattern attack to further degrade the input images. This simulates adversarial conditions that hinder the models’ ability to restore images.
-
-4. **Training and Evaluation Setup:**
-   Each model is trained for 200 epochs using the Adam optimizer. We employ common image enhancement metrics such as Peak Signal-to-Noise Ratio (PSNR) and Structural Similarity Index Measure (SSIM) to quantitatively assess model performance under both normal and attacked scenarios.
-
-## Repository Structure
-
-- `code/`  
-  Contains the training scripts, model architectures, and evaluation tools.
-  
-- `data/`  
-  Placeholder for dataset files or instructions on how to access them.
-  
-- `models/`  
-  Saved model weights and configuration files.
-  
-- `results/`  
-  Outputs from the experiments, including metrics and logs.
-
-- `report/`  
-  Contains the project’s report detailing the methodology, related works, experimental setup, and references.
-
-## Getting Started
-
-1. **Dependencies:**  
-   - Python 3.x
-   - PyTorch
-   - NumPy
-   - OpenCV
-   - Other dependencies as listed in `requirements.txt` (if provided)
-
-2. **Running the Code:**  
-   Instructions for data preprocessing, training, and evaluation will be found in `code/README.md`.
-
-## Acknowledgments
-
-This work is a result of the ECE661 team’s efforts at Duke University. We acknowledge the support of our instructors and the availability of open-source models and frameworks that facilitated our experiments.
+## Acknowledgments and References
+This project is part of ECE661 Team 22. For further reading on the models, please refer to:
+- [Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network (Ledig et al.)](https://arxiv.org/abs/1609.04802)
+- [Image-to-Image Translation with Conditional Adversarial Networks (Isola et al.)](https://arxiv.org/abs/1611.07004)
+- [DeblurGAN-v2: Deblurring (Orders-of-Magnitude) Faster and Better (Kupyn et al.)](https://arxiv.org/abs/1908.03826)
